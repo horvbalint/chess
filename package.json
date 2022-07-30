@@ -1,0 +1,22 @@
+{
+  "name": "chess",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "tauri": "tauri",
+    "check": "cd src-tauri && cargo watch -c -q -x check"
+  },
+  "dependencies": {
+    "@tauri-apps/api": "^1.0.2",
+    "vue": "^3.2.37"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^1.0.5",
+    "@vitejs/plugin-vue": "^3.0.0",
+    "vite": "^3.0.0"
+  }
+}
