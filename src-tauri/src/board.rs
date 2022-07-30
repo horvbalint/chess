@@ -77,7 +77,7 @@ impl Board {
         Bishop => self.calc_bishop(x, y, &piece.color),
         Rook => self.calc_rook(x, y, &piece.color),
         Queen => self.calc_queen(x, y, &piece.color),
-        _ => vec![]
+        King => self.calc_king(x, y, &piece.color),
       };
     
       let container = match piece.color {
@@ -209,15 +209,46 @@ impl Board {
     return valid_steps
   }
 
-  fn add_if_empty(&self, container: &mut Vec<Pos>, pos: Pos) {
+  fn calc_king(&self, x: usize, y: usize, color: &Color) -> Vec<Pos> {
+    let x = x as i32;
+    let y = y as i32;
+
+    let mut valid_steps = vec![];
+
+    for shift_x in -1..=1 {
+      for shift_y in -1..=1 {
+        if shift_x == 0 && shift_y == 0 {continue}
+
+        let curr_x = x + shift_x;
+        let curr_y = y + shift_y;
+
+        if !(0..8).contains(&curr_x) || !(0..8).contains(&curr_y) {continue}
+
+        self.add_if_empty_or_enemy(&mut valid_steps, Pos::new(curr_x as usize, curr_y as usize), color)
+      }
+    }
+
+    return valid_steps
+  }
+
+  fn add_if_empty_or_enemy(&self, container: &mut Vec<Pos>, pos: Pos, color: &Color) {
+    if !self.add_if_empty(container, pos.clone()) {
+      self.add_if_enemy(container, pos, color)
+    }
+  }
+
+  fn add_if_empty(&self, container: &mut Vec<Pos>, pos: Pos) -> bool {
     if self.pieces[pos.y][pos.x].is_none() {
-      container.push(pos)
+      container.push(pos);
+      return true
+    } else {
+      return false
     }
   }
 
   fn add_if_enemy(&self, container: &mut Vec<Pos>, pos: Pos, color: &Color) {
     if let Some(piece) = &self.pieces[pos.y][pos.x] {
-      if piece.color != *color {
+      if piece.color != *color && piece.rank != King {
         container.push(pos)
       }
     }

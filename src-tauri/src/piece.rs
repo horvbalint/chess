@@ -6,7 +6,7 @@ pub enum Color {
   Black,
 }
 
-#[derive(Clone, Serialize, Debug)]
+#[derive(Clone, Serialize, Debug, PartialEq)]
 pub enum Rank {
   Pawn,
   Bishop,
