@@ -51,6 +51,9 @@ export default {
     })
 
     this.$refs.board.addEventListener('click', ({offsetX, offsetY}) => {
+      offsetX = this.board.currPlayer == 'White' ? offsetX : this.$refs.board.width - offsetX
+      offsetY = this.board.currPlayer == 'White' ? offsetY : this.$refs.board.height - offsetY
+
       let x = Math.floor(offsetX / this.board.tileSize)
       let y = Math.floor(offsetY / this.board.tileSize)
 
@@ -122,11 +125,16 @@ export default {
 
       this.board.selectedTile = null
       this.possibleSteps = []
+
+      console.log('HERE')
       this.board.currPlayer = this.board.currPlayer == 'White' ? 'Black' : 'White'
 
       this.drawBoard()
     },
     drawBoard() {
+      let rotation = this.board.currPlayer == 'White' ? 0 : Math.PI
+      this.rotateCtx(rotation)
+      
       this.ctx.fillStyle = '#ffffff'
       this.ctx.fillRect(0, 0, this.board.size, this.board.size)
 
@@ -154,13 +162,26 @@ export default {
 
           let piece = this.board.state[i][j]
           if(piece) {
+            this.ctx.save()
+            this.rotateCtx(rotation, x + this.board.tileSize/2, y + this.board.tileSize/2)
             this.ctx.fillStyle = '#000000'
+            this.ctx.textBaseline = 'top'
+
             let pieceChar = this.pieceChars[piece.rank][piece.color]
-            this.ctx.fillText(pieceChar, x, y + this.board.tileSize)
+            this.ctx.fillText(pieceChar, x, y)
+            
+            this.ctx.restore()
           }
         }
       }
+
+      this.rotateCtx(-rotation)
     },
+    rotateCtx(angle, transX = this.$refs.board.width/2, transY = this.$refs.board.height/2) {
+      this.ctx.translate(transX, transY)
+      this.ctx.rotate(angle)
+      this.ctx.translate(-transX, -transY)
+    }
   },
   components: {
     DeadPieces
